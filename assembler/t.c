@@ -1,4 +1,4 @@
-#include <libbase.h>
+#include <fsl.h>
 
 const u8 NULL_TERMINATOR = '\0';
 const u8 NULL_END = 0x00;
@@ -113,16 +113,16 @@ typedef struct
 opc OpCodes[1024] = {0};
 int OpCodeCount = 0;
 
-bool is_number(string q)
-{
-    for(int i = 0; q[i] != '\0'; i++)
-    {
-        if(q[i] < 0 && q[i] > 9)
-            return false;
-    }
+// bool is_number(string q)
+// {
+//     for(int i = 0; q[i] != '\0'; i++)
+//     {
+//         if(q[i] < 0 && q[i] > 9)
+//             return false;
+//     }
 
-    return true;
-}
+//     return true;
+// }
 
 mov reg_to_type(string reg)
 {
@@ -267,7 +267,6 @@ i8 entry(int argc, string argv[])
         .needs_ptr = 0
     };
 
-    // Only person in com whos made a real x86/x86_64 NASM COMPILER :3333333333333
     convert_asm("xor rax, rax", 0);
     convert_asm("mov eax, 1", 0);
     convert_asm("mov ebx, 1", 0);
@@ -288,7 +287,6 @@ i8 entry(int argc, string argv[])
         .needs_ptr = 0
     };
     OpCodes[OpCodeCount++] = (opc){
-        //                      v CANT SEE THE 3 BYTES? (LOL)???????????? CRYN RN
         .code = to_heap((u8 []){0xFF, 0x00, 0xFF}, 3),
         .bytes = 3,
         .needs_ptr = 0
@@ -320,7 +318,7 @@ i8 entry(int argc, string argv[])
     u8 test_len = 5;
 
     file_write(file, final_executable, idx);
-    file_write(file, &hello_len, sizeof(u8));
+    file_write(file, (const string)&hello_len, sizeof(u8));
     file_write(file, (const string)&BLACKSPACE, sizeof(u8));
     file_write(file, "Hello\n", hello_len);
     file_write(file, (const string)&NULL_TERMINATOR, sizeof(u8));
