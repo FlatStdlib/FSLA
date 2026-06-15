@@ -25,7 +25,7 @@ typedef enum {
 #define DATA_T_COUNT 7
 
 void *DATA_TYPES[][3] = {
-	{(ptr)a_BYTE, 	    "byte",     (ptr)a_BYTE_SZ},
+	{(ptr)a_BYTE, 	    "i8",     (ptr)a_BYTE_SZ},
 	{(ptr)a_SHORT,      "i16",      (ptr)a_SHORT_SZ},
 	{(ptr)a_INT, 	    "i32",      (ptr)a_INT_SZ},
 	{(ptr)a_BOOL, 	    "i32",      (ptr)a_BOOL_SZ},
@@ -107,7 +107,7 @@ bool validate_var(string line, int line_n)
     }
 
     data_t type = find_type(args[0]);
-    if(type == -1)
+    if(type == 0)
         return false;
         
     string name = str_dup(args[1]);
@@ -118,14 +118,13 @@ bool validate_var(string line, int line_n)
     v.name = name;
     v.is_init = 0;
 
-    printi(argc);
     if(argc == 2)
     {
         /* Declaration Detect Only */
         pfree_array((array)args);
         vars[var_count] = v;
         var_count++;
-        
+
         return true;
     }
 
@@ -371,16 +370,19 @@ int entry(int argc, string argv[])
 
     if(var_count > 0)
     {
-        println("\x1b[32mListing Noted Variables:\x1b[39m");
-        for(int i = 0; i < var_count; i++)
+        _printf("\x1b[32mListing %d Noted Variables:\x1b[39m\n", &var_count);
+        for(int i = 0; i < var_count; i++) {
             _printf("Variable Noted: %s\n", vars[i].name);
+        }
     }
 
     if(fnc_count)
     {
         println("\x1b[32mListing Noted Functions:\x1b[39m");
         for(int i = 0; i < fnc_count; i++)
+        {
             _printf("Function Noted: %s\n", fncs[i].name);
+        }
     }
 
 	return 0;

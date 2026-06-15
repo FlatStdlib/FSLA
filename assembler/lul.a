@@ -1,4 +1,4 @@
-byte ptr;
+i8 ptr;
 i32 n;
 
 i8 entry()
