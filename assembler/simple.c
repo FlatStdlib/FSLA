@@ -196,12 +196,14 @@ int entry(int argc, string argv[])
 
     if(var_count > 0)
     {
+        println("\x1b[32mListing Noted Variables:\x1b[39m");
         for(int i = 0; i < var_count; i++)
             _printf("Variable Noted: %s\n", variable[i].name);
     }
 
     if(fnc_count)
     {
+        println("\x1b[32mListing Noted Functions:\x1b[39m");
         for(int i = 0; i < fnc_count; i++)
             _printf("Function Noted: %s\n", fncs[i].name);
     }
