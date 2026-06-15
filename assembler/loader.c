@@ -1,4 +1,9 @@
 /*
+    A loader, for x86_64 code to be pushed into this compiled binary 
+    example: 
+        gcc your_file.c -c
+        cat your_file.o > loader (becomes the final binary for your_file)
+
     FOR DEBUGGING;
         0xD1D0 - gcc -nostdlib -c loader.c -ggdb; ld -o t loader.o /usr/lib/libfsl.a /usr/lib/loader.o
         0x62B0 - strip t

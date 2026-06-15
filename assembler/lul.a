@@ -1,0 +1,16 @@
+
+
+i8 entry()
+{
+	char *str = "Hello World\n";
+	asm("mov rax, 1");
+	asm("mov rdi, 1");
+	asm("mov rsi, $str");
+	asm("mov rdx, 12");
+	asm("syscall");
+
+	asm("mov rax, 60");
+	asm("mov rdi, 0");
+	asm("syscall");
+}
+
