@@ -1,8 +1,8 @@
-
+byte ptr;
+i32 n;
 
 i8 entry()
 {
-	char *str = "Hello World\n";
 	asm("mov rax, 1");
 	asm("mov rdi, 1");
 	asm("mov rsi, $str");
