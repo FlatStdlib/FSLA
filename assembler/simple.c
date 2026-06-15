@@ -1,5 +1,29 @@
 #include <fsl.h>
 
+// x86
+typedef enum {
+    eax = 0xB8,
+    ecx = 0xB9,
+    edx = 0xBA,
+    ebx = 0xBB,
+    esp = 0xBC,
+    ebp = 0xBD,
+    esi = 0xBE,
+    edi = 0xBF
+} mov;
+typedef struct 
+{
+    u8              *code;     // raw bytes
+    int             needs_ptr; // on 'mov reg, raw_ptr'
+    int             bytes;     // Bytes in 'code'
+} opc;
+
+extern i8 test(sArr opcodes, sArr buffers, int *lens);
+extern opc convert_asm(string q, ptr p);
+extern u8 *mov_imm64_reg(mov reg, u64 n);
+extern mov reg_to_type(string reg);
+extern u8 *invoke_syscall();
+
 /* 64bit Size in Bytes */
 typedef enum {
     a_BYTE_SZ       = 1,
@@ -33,6 +57,7 @@ void *DATA_TYPES[][3] = {
 	{(ptr)a_DOUBLE,     "i64",      (ptr)a_DOUBLE_SZ},
 	NULL
 };
+
 
 data_t find_type(string q)
 {
@@ -91,6 +116,30 @@ int fnc_count = 0;
 char *ERRORS[25] = {0};
 int ERR_COUNT = 0;
 
+bool is_fnc_or_var_call(string line)
+{
+    if(!line)
+        return false;
+
+    int len = var_count > fnc_count ? var_count : fnc_count;
+    for(int i = 0; i < len; i++)
+    {
+        if(vars[i].name)
+        {
+            if(str_startswith(line, vars[i].name))
+                return 1;
+        }
+
+        if(fncs[i].name)
+        {
+            if(str_startswith(line, fncs[i].name))
+                return 2;
+        }
+    }
+
+    return false;
+}
+
 bool validate_var(string line, int line_n)
 {
     if(!line)
@@ -103,12 +152,15 @@ bool validate_var(string line, int line_n)
         _sprintf(_OUTPUT_, "err: #%d, Invalid declaration, Missing variable name!", (void *[]){(ptr)&line_n});
         ERRORS[ERR_COUNT] = str_dup(_OUTPUT_);
         ERR_COUNT++;
+        pfree_array((array)args);
         return false;
     }
 
     data_t type = find_type(args[0]);
-    if(type == 0)
+    if(type == 0) {
+        pfree_array((array)args);
         return false;
+    }
         
     string name = str_dup(args[1]);
 
@@ -201,8 +253,11 @@ bool validate_func(string line, int line_n)
     }
 
     /* Variable Detected */
-    if(line[__get_size__(line) - 2] == ';')
+    if(line[__get_size__(line) - 2] == ';') {
+        pfree(name, 1);
+        pfree_array((array)args);
         return false;
+    }
 
     /* Ensure params are after function name */
     int pos = find_string(line, args[1]);
@@ -213,6 +268,8 @@ bool validate_func(string line, int line_n)
         _sprintf(_OUTPUT_, "err: #%d, Invalid function parameter declaration", (void *[]){(ptr)&line_n});
         ERRORS[ERR_COUNT] = str_dup(_OUTPUT_);
         ERR_COUNT++;
+        pfree(name, 1);
+        pfree_array((array)args);
         return false;
     }
 
@@ -224,7 +281,6 @@ bool validate_func(string line, int line_n)
         arguments[__get_size__(arguments) - 2] = '\0';
         trim_char_idx(arguments, 0);
 
-        println(arguments);
         int arg_c = 0;
         sArr arg_v = split_string(arguments, ',', &arg_c);
 
@@ -273,11 +329,9 @@ bool validate_func(string line, int line_n)
     return true;
 }
 
+char FILENAME[255] = {0};
 int entry(int argc, string argv[])
 {
-    int check = find_type("i8");
-    _printf("Check: %d\n", &check);
-
 	/* Simple NASM syntax Assembler */
 	if(argc < 2)
 	{
@@ -285,7 +339,13 @@ int entry(int argc, string argv[])
 		return 1;
 	}
 
-	fd_t fd = open_file(argv[1], 0, 0);
+    mem_cpy(FILENAME, argv[1], __get_size__(argv[1]));
+
+    uninit_mem();
+    set_heap_sz(_HEAP_PAGE_ * 5);
+    init_mem();
+
+	fd_t fd = open_file(FILENAME, 0, 0);
 	if(!fd)
 		fsl_panic("Unable to open file!");
 
@@ -307,16 +367,17 @@ int entry(int argc, string argv[])
 		if(is_empty(lines[i])) continue;
 
         str_strip(lines[i]);
+        int len = str_len(lines[i]);
 		int arg_c = 0;
 		sArr args = split_string(lines[i], ' ', &arg_c);
 		if(!arg_c || !args)
 			continue;
 
-		_printf("[%d]: %s\n", (ptr)&i, lines[i]);
+		_printf("[%d]: '%s'\n", (ptr)&i, lines[i]);
 
         /* Function and Variable Detection (In-Function Variables Included) */
         int chk = find_type(args[0]);
-		if(chk > -1)
+		if(chk > 0)
 		{
             /* In-Function Variable */
             if(s.in_function && lines[i][__get_size__(lines[i]) - 1] == ';')
@@ -349,13 +410,69 @@ int entry(int argc, string argv[])
         /* In-Function Code Processing */
         if(s.in_function)
         {
+            if(lines[i][0] == '{')
+                continue;
+            /* asm() function hardcoded manually */
+            if(str_startswith(lines[i], "asm("))
+            {
+                string buff = str_dup(lines[i]);
+                buff[len - 1] = '\0';
+                buff[len - 2] = '\0';
+                buff[len - 3] = '\0';
+                for(int c = 0; c < 5; c++)
+                    trim_char_idx(buff, 0);
+
+                int asm_c = 0;
+                sArr asm_args = split_string(buff, ' ', &asm_c);
+                if(!asm_c || !asm_args) {
+                    pfree(buff, 1);
+                    continue;
+                }
+
+                if(asm_c > 1)
+                {
+                    asm_args[1][4] = '\0';
+                    mov reg = reg_to_type(asm_args[1]);
+                    u64 val = str_to_int(asm_args[2]);
+                    u8 *op = mov_imm64_reg(reg, val);
+                    char byte[3];
+                    for(int c = 0; c < 10; c++)
+                    {
+                        byte_to_hex(op[c], byte);
+                        print(byte), print(", ");
+                    }
+                    println(NULL);
+                    
+                    pfree_array((array)asm_args);
+                } else {
+                    u8 *op = invoke_syscall();
+                    char byte[3];
+                    for(int c = 0; c < 3; c++)
+                    {
+                        byte_to_hex(op[c], byte);
+                        print(byte), print(", ");
+                    }
+                    println(NULL);
+                }
+                
+                pfree(buff, 1);
+            }
+
             // Process Function Line and Generate to 
-            if(str_cmp(lines[i], "}"))
+            if(lines[i][0] == '}')
             {
                 s.in_function = false;
                 continue;
             }
-            continue;
+
+            int chk = is_fnc_or_var_call(lines[i]);
+            if(chk == 1)
+            {
+                // var call
+            } else if(chk == 2)
+            {
+                // fnc call
+            }
         }
 
 		pfree(args, 1);
@@ -384,6 +501,5 @@ int entry(int argc, string argv[])
             _printf("Function Noted: %s\n", fncs[i].name);
         }
     }
-
 	return 0;
 }

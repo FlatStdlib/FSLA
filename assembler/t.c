@@ -190,9 +190,9 @@ opc convert_asm(string q, ptr p)
             mov reg = reg_to_type(args[1]);
             char buff[100];
             byte_to_hex(reg, buff);
-            _printf("Register: %s | ", buff);
+            // _printf("Register: %s | ", buff);
             u64 value = str_to_int(args[2]); // This needs to be checked for max number of i32
-            _printf("Num: %d \n", (void *)&value);
+            // _printf("Num: %d \n", (void *)&value);
             // u8 *c0de = ARCH_MODE == x86 ? c0de = mov_imm32_reg(reg, value) : mov_imm64_reg(reg, value);
             
             u8 *c0de = mov_imm32_reg(reg, value);
@@ -239,12 +239,12 @@ opc convert_asm(string q, ptr p)
 //      ---------
 // BUFFER:
 //      SZ:CONST (in binary for load-up)
-i8 entry(int argc, string argv[])
+i8 test(sArr opcodes, sArr buffers, int *lens)
 {
-    if(argc > 1 && array_contains_str((array)argv, "--64"))
+    // if(argc > 1 && array_contains_str((array)argv, "--64"))
         ARCH_MODE = x86_64;
-    else
-        ARCH_MODE = x86;
+    // else
+    //     ARCH_MODE = x86;
 
     // Custom Indication
     OpCodes[OpCodeCount++] = (opc){
@@ -267,20 +267,24 @@ i8 entry(int argc, string argv[])
         .needs_ptr = 0
     };
 
-    convert_asm("xor rax, rax", 0);
-    convert_asm("mov eax, 1", 0);
-    convert_asm("mov ebx, 1", 0);
-    convert_asm("mov rsi, 0x00000001", 0);
-    convert_asm("mov edx, 10", 0);
-    convert_asm("syscall", 0);
-    convert_asm("mov eax, 1", 0);
-    convert_asm("mov ebx, 1", 0);
-    convert_asm("mov rsi, 0x00000002", 0);
-    convert_asm("mov edx, 10", 0);
-    convert_asm("syscall", 0);
-    convert_asm("mov eax, 60", 0);
-    convert_asm("mov ebx, 0", 0);
-    convert_asm("syscall", 0);
+    // convert_asm("xor rax, rax", 0);
+    // convert_asm("mov eax, 1", 0);
+    // convert_asm("mov ebx, 1", 0);
+    // convert_asm("mov rsi, 0x00000001", 0);
+    // convert_asm("mov edx, 10", 0);
+    // convert_asm("syscall", 0);
+    // convert_asm("mov eax, 1", 0);
+    // convert_asm("mov ebx, 1", 0);
+    // convert_asm("mov rsi, 0x00000002", 0);
+    // convert_asm("mov edx, 10", 0);
+    // convert_asm("syscall", 0);
+    // convert_asm("mov eax, 60", 0);
+    // convert_asm("mov ebx, 0", 0);
+    // convert_asm("syscall", 0);
+
+    for(int i = 0; opcodes[i] != NULL; i++)
+        convert_asm(opcodes[i], 0);
+
     OpCodes[OpCodeCount++] = (opc){
         .code = to_heap((u8 []){0xC3}, 1),
         .bytes = 1,
@@ -319,13 +323,21 @@ i8 entry(int argc, string argv[])
 
     file_write(file, final_executable, idx);
     file_write(file, (const string)&hello_len, sizeof(u8));
-    file_write(file, (const string)&BLACKSPACE, sizeof(u8));
-    file_write(file, "Hello\n", hello_len);
-    file_write(file, (const string)&NULL_TERMINATOR, sizeof(u8));
-    file_write(file, &test_len, sizeof(u8));
-    file_write(file, (const string)&BLACKSPACE, sizeof(u8));
-    file_write(file, "TEST\n", test_len);
-    file_write(file, (const string)&NULL_TERMINATOR, sizeof(u8));
+
+    for(int i = 0; buffers[i] != NULL; i++)
+    {    
+        file_write(file, (const string)&BLACKSPACE, sizeof(u8));
+        file_write(file, buffers[i], lens[i]);
+        file_write(file, (const string)&NULL_TERMINATOR, sizeof(u8));
+    }
+
+    // file_write(file, (const string)&BLACKSPACE, sizeof(u8));
+    // file_write(file, "Hello\n", hello_len);
+    // file_write(file, (const string)&NULL_TERMINATOR, sizeof(u8));
+    // file_write(file, &test_len, sizeof(u8));
+    // file_write(file, (const string)&BLACKSPACE, sizeof(u8));
+    // file_write(file, "TEST\n", test_len);
+    // file_write(file, (const string)&NULL_TERMINATOR, sizeof(u8));
     file_close(file);
     return 0;
 }
