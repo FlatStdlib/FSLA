@@ -61,6 +61,82 @@ struct parser_settings
 	bool in_variable;
 };
 
+typedef struct {
+    data_t  type;
+    string  name;
+    int     is_int;
+} var;
+
+typedef struct
+{
+    data_t  type;
+    string  name;
+    int     parameters;
+} fnc;
+
+var variable[25] = {0};
+int var_count = 0;
+
+fnc fncs[25] = {0};
+int fnc_count = 0;
+
+char *ERRORS[25] = {0};
+int ERR_COUNT = 0;
+
+bool validate_var(string line, int line_n)
+{
+    if(!line)
+        return false;
+
+    int argc = 0;
+    sArr args = split_string(line, ' ', &argc);
+    if(!argc || !args || argc < 2)
+    {
+        _sprintf(_OUTPUT_, "err: #%d, Invalid declaration, Missing variable name!", (void *[]){(ptr)&line_n});
+        ERRORS[ERR_COUNT] = str_dup(_OUTPUT_);
+        ERR_COUNT++;
+        return false;
+    }
+
+    data_t type = find_type(args[0]);
+    string name = str_dup(args[1]);
+}
+
+bool validate_func(string line, int line_n)
+{
+    if(!line)
+        return false;
+
+    int argc = 0;
+    sArr args = split_string(line, ' ', &argc);
+    if(!argc || !args || argc < 2)
+    {
+        _sprintf(_OUTPUT_, "err: #%d, Invalid declaration, Missing function name!", (void *[]){(ptr)&line_n});
+        ERRORS[ERR_COUNT] = str_dup(_OUTPUT_);
+        ERR_COUNT++;
+        return false;
+    }
+
+    data_t type = find_type(args[0]);
+    string name = str_dup(args[1]);
+
+    if(str_endswith(name, "()"))
+    {
+        /* Parameters can be ignored if there isnt any */
+        name[__get_size__(name) - 3] = '\0';
+        name[__get_size__(name) - 2] = '\0';
+    }
+
+    fnc fn;
+    memzero(&fn, sizeof(fnc));
+    fn.type = type;
+    fn.name = name;
+
+    mem_cpy(&fncs[fnc_count], &fn, sizeof(fn));
+    fnc_count++;
+    pfree_array((array)args);
+}
+
 int entry(int argc, string argv[])
 {
     int check = find_type("i8");
@@ -105,11 +181,30 @@ int entry(int argc, string argv[])
 		{
 			_printf("Function found: %s\n", args[1]);
 			s.in_function = true;
+            validate_func(lines[i], i);
 		}
 
 		pfree(args, 1);
 		arg_c = 0;
 	}
+
+    if(ERR_COUNT > 0)
+    {
+        for(int i = 0; i < ERR_COUNT; i++)
+            println(ERRORS[i]);
+    }
+
+    if(var_count > 0)
+    {
+        for(int i = 0; i < var_count; i++)
+            _printf("Variable Noted: %s\n", variable[i].name);
+    }
+
+    if(fnc_count)
+    {
+        for(int i = 0; i < fnc_count; i++)
+            _printf("Function Noted: %s\n", fncs[i].name);
+    }
 
 	return 0;
 }
