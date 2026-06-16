@@ -359,7 +359,7 @@ int entry(int argc, string argv[])
 	sArr lines 		= split_lines(buffer, &line_count);
 
 	//
-	// Fake ASM Function to detect calls
+	// Macros ASM Function to detect calls
 	//
 	fncs[fnc_count++] = (fnc){
 		.type = a_BYTE,
