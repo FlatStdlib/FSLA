@@ -161,7 +161,7 @@ bool validate_var(string line, int line_n)
         pfree_array((array)args);
         return false;
     }
-        
+
     string name = str_dup(args[1]);
 
     var v;
@@ -234,7 +234,7 @@ bool validate_func(string line, int line_n)
     if(type == 0)
         return false;
 
-    string name = str_dup(args[1]);
+   	string name = str_dup(args[1]);
 
     // TODO; detect function parameters @ arg 3+
     // BUT WE'RE JUST GONNAH USE NO PARAMS FOR TESTING
@@ -358,6 +358,14 @@ int entry(int argc, string argv[])
 	int line_count 	= 0;
 	sArr lines 		= split_lines(buffer, &line_count);
 
+	//
+	// Fake ASM Function to detect calls
+	//
+	fncs[fnc_count++] = (fnc){
+		.type = a_BYTE,
+		.name = str_dup("asm")
+	};
+
 	struct parser_settings s = {false};
 	for(int i = 0; i < line_count; i++)
 	{
@@ -401,7 +409,6 @@ int entry(int argc, string argv[])
             if(!validate_func(lines[i], i))
                 continue;
 
-                
 			_printf("Function found: %s\n", args[1]);
 			s.in_function = true;
             continue;
@@ -413,7 +420,8 @@ int entry(int argc, string argv[])
             if(lines[i][0] == '{')
                 continue;
             /* asm() function hardcoded manually */
-            if(str_startswith(lines[i], "asm("))
+            int n = false;
+            if(str_startswith(lines[i], "asm(") && n)
             {
                 string buff = str_dup(lines[i]);
                 buff[len - 1] = '\0';
@@ -442,12 +450,12 @@ int entry(int argc, string argv[])
                         print(byte), print(", ");
                     }
                     println(NULL);
-                    
+
                     pfree_array((array)asm_args);
                 } else {
                     u8 *op = invoke_syscall();
                     char byte[3];
-                    for(int c = 0; c < 3; c++)
+                    for(int c = 0; c < 2; c++)
                     {
                         byte_to_hex(op[c], byte);
                         print(byte), print(", ");
@@ -469,8 +477,10 @@ int entry(int argc, string argv[])
             if(chk == 1)
             {
                 // var call
+                println("Variable Call");
             } else if(chk == 2)
             {
+            	println("Function Call!");
                 // fnc call
             }
         }
@@ -501,5 +511,6 @@ int entry(int argc, string argv[])
             _printf("Function Noted: %s\n", fncs[i].name);
         }
     }
+
 	return 0;
 }
