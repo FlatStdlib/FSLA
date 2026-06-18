@@ -1,6 +1,8 @@
 #include <fsl.h>
 
 #ifndef __FSL_ASM__
+
+/* Target Arch, Register, Instruction Rules and Info */
 typedef enum
 {
     null_arch   = 0,
@@ -20,8 +22,8 @@ typedef enum {
 } reg_t;
 
 #define REG_COUNT 8
-struct { u8 opcode; const string x86, string x64; } reg_info;
-struct reg_info REGISTERS[REG_COUNT] = {
+struct _reg { u8 opcode; const string x86; const string x64; };
+struct _reg _REGISTERS[] = {
     { eax, "eax", "rax" },
     { ebx, "ebx", "rbx" },
     { ecx, "ecx", "rcx" },
@@ -42,7 +44,7 @@ typedef enum
     syscall = 5,
     int_0x80 = 6,
     ret = 7
-} INSTRUCTIONS;
+} instruction_t;
 
 /*
     Instruction Set Idenifiers
@@ -50,7 +52,7 @@ typedef enum
     TODO; is_instruction_set_valid(char *line)
 */
 #define MAX_INSTRUCTIONS 4
-struct instruction_set { INSTRUCTIONS in; string id; int args; };
+struct instruction_set { instruction_t in; string id; int args; };
 struct instruction_set INSTRUCTION_SETS[] = {
     /* Enum Type - Raw String ID - Argument Per Instruction Set*/
     {inc,       "inc",      2},
@@ -61,6 +63,10 @@ struct instruction_set INSTRUCTION_SETS[] = {
     {int_0x80,  "int 0x80", 0},
     {ret,       "ret",      0}
 };
+
+//
+// Pre-set opcode 
+//
 
 /* EOS Idenifier (End Of String) for the .data section */
 const u8 NULL_TERMINATOR = '\0';
@@ -78,7 +84,6 @@ const u8 E_O_C[] = {0xFF, 0x00, 0xFF};
 */
 const u8 BLACKSPACE = 0xFF;
 
-/* Pre-set opcode */
 #define SYSCALL     {0x0F, 0x05}
 #define INI_0x80    {0xCD, 0x80}
 #define RET         {0xC3}
