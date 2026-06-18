@@ -2,12 +2,20 @@
 
 #ifndef __FSL_ASM__
 
+typedef struct
+{
+    char    *file_name;
+    char    *file_content;
+    int     file_size;
+
+    u8      *byteGen;
+    int      bytes;
+} _asmblr;
+
 /* Target Arch, Register, Instruction Rules and Info */
 typedef enum
 {
-    null_arch   = 0,
-    x86         = 0x32,
-    x86_64      = 0x64
+    null_arch   = 0, x16 = 0x16, x86 = 0x32, x86_64 = 0x64
 } arch_t;
 
 typedef enum {
@@ -35,16 +43,8 @@ struct _reg _REGISTERS[] = {
 };
 
 typedef enum
-{
-    _no = 0,
-    inc = 1,
-    xor = 2,
-    mov = 3,
-    jmp = 4,
-    syscall = 5,
-    int_0x80 = 6,
-    ret = 7
-} instruction_t;
+{ _no = 0, inc, xor, mov, jmp, syscall, int_0x80, ret } 
+instruction_t;
 
 /*
     Instruction Set Idenifiers
