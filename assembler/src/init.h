@@ -87,4 +87,5 @@ typedef struct
 _asmblr init_assembler(string filename);
 public fn parse_file(_asmblr *a);
 public fn parse_instruction(_asmblr *a, string line);
+public i64 get_instruction_info(_asmblr *a, string instruction);
 #endif

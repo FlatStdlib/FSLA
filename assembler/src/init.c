@@ -39,7 +39,7 @@ public fn parse_instruction(_asmblr *a, string line)
 	}
 
 	i64 instru = get_instruction_info(a, line);
-	_iset i = INSUTRCTIONS_SETS[instru];
+	_iset i = INSTRUCTION_SETS[instru];
 	
 	// switch(i->id)
 	// {
