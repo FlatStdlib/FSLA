@@ -2,16 +2,6 @@
 
 #ifndef __FSL_ASM__
 
-typedef struct
-{
-    char    *file_name;
-    char    *file_content;
-    int     file_size;
-
-    u8      *byteGen;
-    int      bytes;
-} _asmblr;
-
 /* Target Arch, Register, Instruction Rules and Info */
 typedef enum
 {
@@ -54,7 +44,7 @@ instruction_t;
 #define MAX_INSTRUCTIONS 4
 struct instruction_set { instruction_t in; string id; int args; };
 struct instruction_set INSTRUCTION_SETS[] = {
-    /* Enum Type - Raw String ID - Argument Per Instruction Set*/
+    /* Enum Type - Raw String ID - Argument Per Instruction Set */
     {inc,       "inc",      2},
     {jmp,       "jmp",      2},
     {xor,       "xor",      2},
@@ -64,6 +54,7 @@ struct instruction_set INSTRUCTION_SETS[] = {
     {ret,       "ret",      0}
 };
 
+typedef struct instruction_set _iset;
 //
 // Pre-set opcode 
 //
@@ -84,8 +75,23 @@ const u8 E_O_C[] = {0xFF, 0x00, 0xFF};
 */
 const u8 BLACKSPACE = 0xFF;
 
-#define SYSCALL     {0x0F, 0x05}
-#define INI_0x80    {0xCD, 0x80}
-#define RET         {0xC3}
+#define _SYSCALL     {0x0F, 0x05}
+#define _INI_0x80    {0xCD, 0x80}
+#define _RET         {0xC3}
 
+typedef struct
+{
+	fd_t 	file;
+	string 	filename;
+	int 	filesize;
+	string	content;
+
+	u8		*opcode;
+	i32		size;
+	string  *buffers;
+} _asmblr;
+
+_asmblr init_assembler(string filename);
+public fn parse_file(_asmblr *a);
+public fn parse_instruction(_asmblr *a, string line);
 #endif
