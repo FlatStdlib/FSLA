@@ -34,8 +34,29 @@ public fn parse_instruction(_asmblr *a, string line)
 	int args = 0;
 	if((args = find_char(line, ' ')) > -1)
 	{
+		i64 instru = get_instruction_info(a, line);
 		return;
 	}
 
+	i64 instru = get_instruction_info(a, line);
+	_iset i = INSUTRCTIONS_SETS[instru];
 	
+	// switch(i->id)
+	// {
+	// 	case 
+	// }
+}
+
+public i64 get_instruction_info(_asmblr *a, string instruction)
+{
+	if(!instruction)
+		return (i64)NULL;
+
+	for(int i = 0; i < TOTAL_INSTRUCTIONS; i++)
+	{
+		if(str_cmp(INSTRUCTION_SETS[i].id, instruction))
+			return i;
+	}
+
+	return (i64)NULL;
 }

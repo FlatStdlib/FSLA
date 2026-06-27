@@ -19,18 +19,14 @@ typedef enum {
     edi = 0xBF
 } reg_t;
 
-#define REG_COUNT 8
-struct _reg { u8 opcode; const string x86; const string x64; };
-struct _reg _REGISTERS[] = {
-    { eax, "eax", "rax" },
-    { ebx, "ebx", "rbx" },
-    { ecx, "ecx", "rcx" },
-    { edx, "edx", "rdx" },
-    { ebp, "ebp", "rbp" },
-    { esp, "esp", "rsp" },
-    { edi, "edi", "rdi" },
-    { esi, "esi", "rsi" }
+struct _reg { 
+    u8 opcode; 
+    const string x86; 
+    const string x64;
 };
+
+#define REG_COUNT 8
+extern struct _reg _REGISTERS[];
 
 typedef enum
 { _no = 0, inc, xor, mov, jmp, syscall, int_0x80, ret } 
@@ -41,29 +37,26 @@ instruction_t;
 
     TODO; is_instruction_set_valid(char *line)
 */
-#define MAX_INSTRUCTIONS 4
-struct instruction_set { instruction_t in; string id; int args; };
-struct instruction_set INSTRUCTION_SETS[] = {
-    /* Enum Type - Raw String ID - Argument Per Instruction Set */
-    {inc,       "inc",      2},
-    {jmp,       "jmp",      2},
-    {xor,       "xor",      2},
-    {mov,       "mov",      2},
-    {syscall,   "syscall",  0},
-    {int_0x80,  "int 0x80", 0},
-    {ret,       "ret",      0}
+struct instruction_set {
+    instruction_t in;
+    string id;
+    int args;
 };
 
+#define ARG_INSTRUCTIONS 4
+#define TOTAL_INSTRUCTIONS 7
+extern struct instruction_set INSTRUCTION_SETS[];
 typedef struct instruction_set _iset;
+
 //
 // Pre-set opcode 
 //
 
 /* EOS Idenifier (End Of String) for the .data section */
-const u8 NULL_TERMINATOR = '\0';
+extern const u8 NULL_TERMINATOR;
 
 /* .data section idenifier */
-const u8 E_O_C[] = {0xFF, 0x00, 0xFF};
+extern const u8 E_O_C[];
 
 /*
     This goes after a string's length before the string in binary 
@@ -73,7 +66,7 @@ const u8 E_O_C[] = {0xFF, 0x00, 0xFF};
         0xFF - SEPARATOR
         ----String----
 */
-const u8 BLACKSPACE = 0xFF;
+extern const u8 BLACKSPACE;
 
 #define _SYSCALL     {0x0F, 0x05}
 #define _INI_0x80    {0xCD, 0x80}
