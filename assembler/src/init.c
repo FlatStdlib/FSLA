@@ -29,6 +29,7 @@ public fn parse_file(_asmblr *a)
 	
 }
 
+/* Parse Instruction Sets */
 public fn parse_instruction(_asmblr *a, string line)
 {
 	int args = 0;
@@ -40,11 +41,12 @@ public fn parse_instruction(_asmblr *a, string line)
 
 	i64 instru = get_instruction_info(a, line);
 	_iset i = INSTRUCTION_SETS[instru];
-	
-	// switch(i->id)
-	// {
-	// 	case 
-	// }
+	switch(i->in)
+	{
+		case xor:
+		case mov:
+		case jmp:
+	}
 }
 
 public i64 get_instruction_info(_asmblr *a, string instruction)

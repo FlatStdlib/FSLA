@@ -13,8 +13,8 @@ struct _reg _REGISTERS[] = {
 
 struct instruction_set INSTRUCTION_SETS[] = {
     /* Enum Type - Raw String ID - Argument Per Instruction Set */
-    {inc,       "inc",      2},
-    {jmp,       "jmp",      2},
+    {inc,       "inc",      1},
+    {jmp,       "jmp",      1},
     {xor,       "xor",      2},
     {mov,       "mov",      2},
     {syscall,   "syscall",  0},
