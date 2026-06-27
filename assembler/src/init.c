@@ -48,17 +48,3 @@ public fn parse_instruction(_asmblr *a, string line)
 		case jmp:
 	}
 }
-
-public i64 get_instruction_info(_asmblr *a, string instruction)
-{
-	if(!instruction)
-		return (i64)NULL;
-
-	for(int i = 0; i < TOTAL_INSTRUCTIONS; i++)
-	{
-		if(str_cmp(INSTRUCTION_SETS[i].id, instruction))
-			return i;
-	}
-
-	return (i64)NULL;
-}
