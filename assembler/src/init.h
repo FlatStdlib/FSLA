@@ -86,10 +86,12 @@ typedef struct
 
 _asmblr init_assembler(string filename);
 public fn parse_file(_asmblr *a);
-public fn parse_instruction(_asmblr *a, string line);
+public ptr parse_instruction(_asmblr *a, string line);
 public i64 get_instruction_info(_asmblr *a, string instruction);
 
 public i64 get_instruction_info(_asmblr *a, string instruction);
 reg_t reg_to_type(string reg);
 public instruction_t checknget_instruction(string q, string dest);
+
+public int * syscall_gen();
 #endif

@@ -30,12 +30,12 @@ public fn parse_file(_asmblr *a)
 }
 
 /* Parse Instruction Sets */
-public fn parse_instruction(_asmblr *a, string line)
+public ptr parse_instruction(_asmblr *a, string line)
 {
 	char instru[15];
-	if(checknget_instruction(line, instru)) == -1) {
+	if(checknget_instruction(line, instru) == -1) {
 		/* TODO; Set an error here, Invalid code */
-		return;
+		return NULL;
 	}
 
 	i64 pos = get_instruction_info(a, instru);
@@ -51,6 +51,7 @@ public fn parse_instruction(_asmblr *a, string line)
 		case jmp:
 			break;
 		case syscall:
+			// return (ptr){0x0F, 0x05};
 			break;
 		case int_0x80:
 			break;

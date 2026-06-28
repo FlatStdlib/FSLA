@@ -1,0 +1,15 @@
+{
+  "configurations": [
+    {
+      "name": "WSL",
+      "compilerPath": "/usr/bin/gcc",
+      "intelliSenseMode": "linux-gcc-x64",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "/usr/include",
+        "/usr/local/include"
+      ]
+    }
+  ],
+  "version": 4
+}
