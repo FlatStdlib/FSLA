@@ -32,19 +32,29 @@ public fn parse_file(_asmblr *a)
 /* Parse Instruction Sets */
 public fn parse_instruction(_asmblr *a, string line)
 {
-	int args = 0;
-	if((args = find_char(line, ' ')) > -1)
-	{
-		i64 instru = get_instruction_info(a, line);
+	char instru[15];
+	if(checknget_instruction(line, instru)) == -1) {
+		/* TODO; Set an error here, Invalid code */
 		return;
 	}
 
-	i64 instru = get_instruction_info(a, line);
-	_iset i = INSTRUCTION_SETS[instru];
-	switch(i->in)
+	i64 pos = get_instruction_info(a, instru);
+	_iset i = INSTRUCTION_SETS[pos];
+	switch(i.in)
 	{
+		case inc:
+			break;
 		case xor:
+			break;
 		case mov:
+			break;
 		case jmp:
+			break;
+		case syscall:
+			break;
+		case int_0x80:
+			break;
+		case ret:
+			break;
 	}
 }

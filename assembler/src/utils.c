@@ -26,4 +26,18 @@ reg_t reg_to_type(string reg)
     return -1;
 }
 
+public instruction_t checknget_instruction(string q, string dest)
+{
+	if(!q)
+		return -1;
 
+	for(int i = 0; q[i] != '\0'; i++)
+	{
+		if(q[i] == ' ')
+			return i;
+
+		dest[i] = q[i];
+	}
+
+	return -1;
+}
