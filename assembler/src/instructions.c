@@ -18,7 +18,7 @@ public u8 *mov_gen(u8 reg)
     static u8 mov32[10] = {0};
 
     /* register & 8 bit representation */
-    static u8 mov64[5] = {0};
+    static u8 mov64[5] = {0x48};
 
     return NULL;
 }
@@ -27,6 +27,6 @@ public u8 *lea_gen(u8 reg)
 {
     static u8 lea32[] = {0};
     
-    static u8 lea64[] = {0};
+    static u8 lea64[] = {0x48};
     return NULL;
 }
