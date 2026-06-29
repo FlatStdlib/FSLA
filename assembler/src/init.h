@@ -93,5 +93,6 @@ public i64 get_instruction_info(_asmblr *a, string instruction);
 reg_t reg_to_type(string reg);
 public instruction_t checknget_instruction(string q, string dest);
 
-public int * syscall_gen();
+public int *syscall_gen();
+public int *int_0x80_gen();
 #endif
