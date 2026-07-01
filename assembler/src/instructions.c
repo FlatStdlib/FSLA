@@ -12,8 +12,23 @@ public u8 *int_0x80_gen()
     return n;
 }
 
-public u8 *mov_gen(u8 reg)
+/*
+    Acceptable Value Usage:
+        - Integer
+        - Offset Pointer
+        - Variable
+*/
+public u8 *mov_gen(u8 reg, string q)
 {
+    if(is_number(q))
+    {
+        // check for a raw int
+    } if(q[0] == '0' && q[1] == 'x') {
+
+    } else { /* else if variable */
+        // err 
+    }
+
     /* register & 4 bit representation */
     static u8 mov32[10] = {0};
 
@@ -23,8 +38,16 @@ public u8 *mov_gen(u8 reg)
     return NULL;
 }
 
-public u8 *lea_gen(u8 reg)
+public u8 *lea_gen(u8 reg, string q)
 {
+    if(is_number(q))
+    {
+        // check for a raw int
+    } if(q[0] == '0' && q[1] == 'x') {
+
+    } else { /* else if variable */
+        // err 
+    }
     static u8 lea32[] = {0};
     
     static u8 lea64[] = {0x48};
