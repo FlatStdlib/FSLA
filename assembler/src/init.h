@@ -77,6 +77,7 @@ typedef struct
 	fd_t 	file;
 	string 	filename;
 	int 	filesize;
+	arch_t	arch;
 	string	content;
 
 	u8		*opcode;
