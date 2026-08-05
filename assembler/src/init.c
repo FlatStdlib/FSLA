@@ -53,7 +53,7 @@ public ptr parse_instruction(_asmblr *a, string line)
 		case syscall:
 			// return (ptr){0x0F, 0x05};
 			break;
-		case int_0x80:
+		case _int:
 			break;
 		case ret:
 			break;

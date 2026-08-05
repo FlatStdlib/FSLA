@@ -29,7 +29,7 @@ struct _reg {
 extern struct _reg _REGISTERS[];
 
 typedef enum
-{ _no = 0, inc, xor, mov, jmp, syscall, int_0x80, ret } 
+{ _no = 0, inc, _int, xor, mov, jmp, syscall, int_0x80, ret } 
 instruction_t;
 
 /*
@@ -41,6 +41,7 @@ struct instruction_set {
     instruction_t in;
     string id;
     int args;
+    u8 *(*handler)(reg_t reg, string q, arch_t arch);
 };
 
 #define ARG_INSTRUCTIONS 4
@@ -94,6 +95,11 @@ public i64 get_instruction_info(_asmblr *a, string instruction);
 reg_t reg_to_type(string reg);
 public instruction_t checknget_instruction(string q, string dest);
 
-public int *syscall_gen();
-public int *int_0x80_gen();
+public u8 *mov_gen(reg_t reg, string q, arch_t arch);
+public u8 *lea_gen(reg_t reg, string q, arch_t arch);
+public u64 validate_integer(string val);
+u8 hex_value(char c);
+
+public u8 *syscall_gen();
+public u8 *int_0x80_gen();
 #endif

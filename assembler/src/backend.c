@@ -11,14 +11,16 @@ struct _reg _REGISTERS[] = {
     { esi, "esi", "rsi" }
 };
 
+/*
+        TYPE | IDENIFIER | OPERANDS Fillment
+*/
 struct instruction_set INSTRUCTION_SETS[] = {
-    /* Enum Type - Raw String ID - Argument Per Instruction Set */
     {inc,       "inc",      1},
     {jmp,       "jmp",      1},
     {xor,       "xor",      2},
-    {mov,       "mov",      2},
+    {mov,       "mov",      2, mov_gen},
+    {_int,      "int",      1},
     {syscall,   "syscall",  0},
-    {int_0x80,  "int 0x80", 0},
     {ret,       "ret",      0}
 };
 

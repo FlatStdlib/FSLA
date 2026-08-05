@@ -2,8 +2,11 @@
 
 public int entry()
 {
-    int *g = int_0x80_gen();
-    for(int i = 0; i < 2; i++)
-        printi(g[i]), println(NULL);
+    u8 *g = int_0x80_gen();
+    char byte[3];
+    for(int i = 0; i < 2; i++) {
+        byte_to_hex(g[i], byte);
+        println(byte);
+    }
     return 0;
 }
