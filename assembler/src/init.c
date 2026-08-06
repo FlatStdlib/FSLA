@@ -31,45 +31,62 @@ public fn parse_file(_asmblr *a)
 	i32 idx = 0, len = 0;
 	for(int i = 0; i < a->filesize; i++)
 	{
+		if(a->content[i - 1] == '/' || a->content[i] == '/')
+		{
+			while(a->content[i++] != '\n');
+			i--;
+			continue;
+		}
+
 		if(a->content[i] == '\t' || a->content[i] == '\r' || a->content[i] == '\n')
 		{
-			memzero(word, 1024);
+			word[0] = '\0';
 			idx = 0;
 			continue;
 		}
 
-		if(a->content[i] == ' ')
-		{
+		/* Tokens */
+		if(find_type(word) != _DT_NULL && a->content[i + 1] == ';') {
+			fsl_warning("expected function or variable name!")
+			while(a->content[i++] != '\n'); // create err here then skip line
+			continue;
+		} else if(a->content[i] == ' ')
+		{				
+
 			word[idx++] = '\0';
-			if(find_type(word) != _DT_NULL) /* TODO; find_type() */ 
+			_Datatype type;
+			if((type = find_type(word)) != _DT_NULL)
 			{
 
 				char arg[1024];
 				int arg_len = 0, n = i+ 1;
-				while(a->content[n] != ' ' && a->content[n] != '\n' && a->content[n] != '[' && a->content[n] != '(' && a->content[n] != ';' && a->content[n] != '\t')
+				while(a->content[n] != ' ' && a->content[n] != '\n' && a->content[n] != '\r' && a->content[n] != '[' && a->content[n] != '(' && a->content[n] != ';' && a->content[n] != '\t')
 					arg[arg_len++] = a->content[n++];
 
 				arg[arg_len] = '\0';
 				_printf("Symbol Name: '%s'\n", arg);
 				arg[0] = '\0';
 
-				if(a->content[n] == '[' || a->content[n] == ';') {
-					println("Variable Found"); // Get the fixed size
+				if(str_cmp(word, (string)__DATA_TYPES_INFO__[_DT_struct][1]))
+				{
+					println("Struct Found\n"); // Create array
+					while(a->content[n++] != '}');
+
+					i = n;
+				} else if(a->content[n] == '[' || a->content[n] == ';') {
+					println("Variable Found\n"); // Get the fixed size
 				} else if(a->content[n] == '(')
 				{
-					
+					println("Function Found\n"); // Parse Function
+					process_function(a->content, &n);
+					i = n;
+					printc(a->content[i]);
+				} else {
+					fsl_warning("expected function or variable name!");
 				}
-
-				if(a->content[n] == '(')
-					println("Function Found"); // Parse Function
 			}
 
-			if(str_cmp(word, "struct"))
-			{
-				println("Struct Found");
-			}
-
-			memzero(word, 1024);
+			word[0] = '\0';
 			idx = 0;
 			continue;
 		}
@@ -98,7 +115,7 @@ public fn parse_file(_asmblr *a)
 		if((in_quotes && a->content[i] == '"') || is_ascii_alpha(a->content[i]) || is_ascii_digit(a->content[i]))
 		{
 			if(idx >= 1023) { /* Doubt, It'll Reach Here */
-				memzero(word, 1024);
+				word[0] = '\0';
 				idx = 0;
 			}
 

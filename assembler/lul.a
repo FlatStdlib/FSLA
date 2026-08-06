@@ -2,7 +2,15 @@
 i8 ptr;
 i32 n;
 
-void print()
+i8;
+
+struct Person {
+	i8[] name;
+	i8 age;
+}
+
+//            rdi       rsi        rdx
+void write(i8 output, ptr string, i8 sz)
 {
 	asm("mov rax, 1");
 	asm("syscall");
@@ -12,8 +20,7 @@ i8 entry()
 {
 	i8 n[] = "Hello World";
 
-
-	print(n);
+	write(1, n, 11);
 	asm("mov rax, 60");
 	asm("mov rdi, 0");
 	asm("syscall");
