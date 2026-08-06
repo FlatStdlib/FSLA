@@ -49,6 +49,7 @@ public fn parse_file(_asmblr *a)
 		if(find_type(word) != _DT_NULL && a->content[i + 1] == ';') {
 			fsl_warning("expected function or variable name!")
 			while(a->content[i++] != '\n'); // create err here then skip line
+			i--;
 			continue;
 		} else if(a->content[i] == ' ')
 		{				

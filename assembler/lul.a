@@ -2,8 +2,6 @@
 i8 ptr;
 i32 n;
 
-i8;
-
 struct Person {
 	i8[] name;
 	i8 age;

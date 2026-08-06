@@ -57,7 +57,7 @@ _function *process_function(string fnc, int *pos)
 
 void process_body(string fnc, int *pos)
 {
-    printc(fnc[*pos]), println(NULL);
+    // printc(fnc[*pos]), println(NULL);
     char word[1024];
     int idx = 0, in_fnc = 0, in_quotes = 0, in_arg_field = 0;
     for(; fnc[*pos] != '\0'; (*pos)++)
@@ -85,26 +85,26 @@ void process_body(string fnc, int *pos)
 		}
 
         /* Function Call */
-        if(mem_cmp(fnc + *pos, "asm", 3)) {
-			*pos += 3;
+        // if(mem_cmp(fnc + *pos, "asm", 3)) {
+		// 	*pos += 3;
 
-			if(mem_cmp(fnc + *pos, "(\"", 2)) {
-				in_quotes = true;
-			}
+		// 	if(mem_cmp(fnc + *pos, "(\"", 2)) {
+		// 		in_quotes = true;
+		// 	}
 
-			char asm_[1024];
-			int asm_len = 0, n = *pos + 2;
-			while(fnc[n] != '"')
-				asm_[asm_len++] = fnc[n++];
+		// 	char asm_[1024];
+		// 	int asm_len = 0, n = *pos + 2;
+		// 	while(fnc[n] != '"')
+		// 		asm_[asm_len++] = fnc[n++];
 
-			asm_[asm_len++] = '\0';
-			_printf("ASM: %s\n", asm_);
+		// 	asm_[asm_len++] = '\0';
+		// 	_printf("ASM: %s\n", asm_);
 
-			if(fnc[n] == ')');
-			*pos = n;
+		// 	if(fnc[n] == ')');
+		// 	*pos = n;
 
-			continue;
-		}
+		// 	continue;
+		// }
 
         if((in_quotes && fnc[*pos] == '"') || is_ascii_alpha(fnc[*pos]) || is_ascii_digit(fnc[*pos]))
 		{
