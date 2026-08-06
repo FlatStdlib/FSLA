@@ -2,14 +2,18 @@
 i8 ptr;
 i32 n;
 
-i8 entry()
+void print()
 {
 	asm("mov rax, 1");
-	asm("mov rdi, 1");
-	asm("mov rsi, $str");
-	asm("mov rdx, 12");
 	asm("syscall");
+}
 
+i8 entry()
+{
+	i8 n[] = "Hello World";
+
+
+	print(n);
 	asm("mov rax, 60");
 	asm("mov rdi, 0");
 	asm("syscall");
