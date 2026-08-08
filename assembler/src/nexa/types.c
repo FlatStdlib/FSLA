@@ -1,5 +1,3 @@
-#include <fsl.h>
-
 #include "types.h"
 
 #define __TOTAL_DATA_TYPES 13

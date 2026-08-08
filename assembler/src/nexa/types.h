@@ -1,3 +1,9 @@
+#pragma once
+
+#include <fsl.h>
+
+#include "assembler/opcode.h"
+
 #ifndef __NEXA_TYPES__
 
 typedef enum {
@@ -36,6 +42,9 @@ typedef struct {
     i64         opcode;
 } _function;
 
+typedef _function *fn_t;
+typedef _variable *var_t;
+
 #ifndef __TYPE_SIZE__
     #define __DT_void   0
 
@@ -58,6 +67,7 @@ extern void *__DATA_TYPES_INFO__[][2];
 _Datatype find_type(string q);
 
 /* function.c */
-_function *process_function(string fnc, int *pos);
+public fn_t process_function(string fnc_line, int *pos);
+public fn process_function_body(fn_t fnc, string fnc_line, int *pos);
 
 #endif

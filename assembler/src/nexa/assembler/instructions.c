@@ -1,15 +1,53 @@
-#include "init.h"
+#include "opcode.h"
 
-public u8 *syscall_gen()
-{
-    static u8 n[] = {0x0F, 0x05};
-    return n;
-}
+static const u8 _SYSCALL[] = { 0x0F, 0x05 };
+static const u8 _INT_0x80[] = { 0xCD, 0x80 };
+static const u8 _RET[] = { 0xC3 };
 
-public u8 *int_0x80_gen()
+/* Parse Instruction Sets */
+public ptr parse_instruction(string line, arch_t arch)
 {
-    static u8 n[] = {0xCD, 0x80};
-    return n;
+	char instru[15] = {0};
+	if(checknget_instruction(line, instru) == -1) {
+		/* TODO; Set an error here, Invalid code */
+		mem_cpy(instru, line, _str_len(line));
+		// return NULL;
+	}
+
+	sArr operands = NULL;
+	if(find_char(line, ' ') > -1)
+	{
+		int operand_count = 0;
+		operands = split_string(line, ' ', &operand_count);
+		if(operand_count < 2 || !operands) {
+			printi(operand_count), println(NULL);
+			return NULL;
+		}
+
+		operands[1][__get_size__(operands[1]) - 2] = '\0';
+		println(operands[1]), println(NULL);
+	}
+
+	i64 pos = get_instruction_info(instru);
+	if(pos == -1)
+		fsl_panic("Invalid instruction...!");
+
+	_iset i = INSTRUCTION_SETS[pos];
+	switch(i.in)
+	{
+		case inc:
+			break;
+		case xor:
+			break;
+		case mov: 		
+		println("HERE");
+		return mov_gen(reg_to_type(operands[1]), operands[2], arch);
+		case jmp:
+			break;
+		case syscall: 	return _SYSCALL;
+		case _int: 		return _INT_0x80;
+		case ret: 		return _RET;
+	}
 }
 
 /*
@@ -19,6 +57,7 @@ public u8 *int_0x80_gen()
 */
 public u8 *mov_gen(reg_t reg, string q, arch_t arch)
 {
+	println("HERE");
 	u8 _mov[10] = {0};
 
 	if(arch == x86)

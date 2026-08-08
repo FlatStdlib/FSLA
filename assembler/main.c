@@ -3,7 +3,7 @@
 public int entry()
 {
     // toggle_debug_mode();
-    _asmblr a = init_assembler("lul.a");
+    _asmblr a = init_assembler("lul.n");
     parse_file(&a);
 
     // u8 *g = int_0x80_gen();

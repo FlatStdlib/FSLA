@@ -1,0 +1,42 @@
+@x86
+i8 ptr;
+i32 n;
+i8 my_name [];
+
+struct Person {
+	i8 name[];
+	i8 age;
+}
+
+//            rdi       rsi        rdx
+void write (i8 output,     ptr    string, i8 size)
+{
+	asm("mov rax, 1");
+	asm("syscall");
+}
+
+// broken code test: invalid parameter type 
+/*
+void _write(i8 output, ptr string, i8 sz, fag lul)
+{
+	asm("mov rax, 1");
+	asm("syscall");
+}
+*/
+
+// broken code test: invalid parameter usage
+//void test(i8 output, ptr string, i8 sz, i8)
+//{
+//	asm("mov rax, 1");
+//	asm("syscall");
+//}
+
+i8 entry(   )
+{
+	i8 n[] = "Hello World";
+
+	write(1, n, 11);
+	asm("mov rax, 60");
+	asm("mov rdi, 0");
+	asm("syscall");
+}

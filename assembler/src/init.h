@@ -1,10 +1,8 @@
 #include <fsl.h>
 
 #include "nexa/types.h"
-#include "nexa/assembler/opcode.h"
 
-#ifndef __FSL_ASM__
-
+#ifndef __NEXA_LANG__
 
 typedef struct
 {
@@ -23,18 +21,11 @@ typedef struct
 
 _asmblr init_assembler(string filename);
 public fn parse_file(_asmblr *a);
-public ptr parse_instruction(_asmblr *a, string line);
-public i64 get_instruction_info(_asmblr *a, string instruction);
 
-public i64 get_instruction_info(_asmblr *a, string instruction);
-reg_t reg_to_type(string reg);
-public instruction_t checknget_instruction(string q, string dest);
+void skip_line(string buffer, int *pos);
+bool validate_whitespace(char c);
+i8 get_next_token(string buffer, int pos);
+char get_next_symbol_only(string buffer, int pos);
+char get_next_token_only(string buffer, int pos);
 
-public u8 *mov_gen(reg_t reg, string q, arch_t arch);
-public u8 *lea_gen(reg_t reg, string q, arch_t arch);
-public u64 validate_integer(string val);
-u8 hex_value(char c);
-
-public u8 *syscall_gen();
-public u8 *int_0x80_gen();
 #endif

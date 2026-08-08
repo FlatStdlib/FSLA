@@ -1,7 +1,15 @@
+#include <fsl.h>
+
+#ifndef __NEXA_OPCODE_LIB__
+
 /* Target Arch, Register, Instruction Rules and Info */
 typedef enum
 {
-    null_arch   = 0, x16 = 0x16, x86 = 0x32, x86_64 = 0x64
+    null_arch = 0,
+    x8 = 0x8,
+    x16 = 0x16, 
+    x86 = 0x32, 
+    x86_64 = 0x64
 } arch_t;
 
 typedef enum {
@@ -25,7 +33,7 @@ struct _reg {
 extern struct _reg _REGISTERS[];
 
 typedef enum
-{ _no = 0, inc, _int, xor, mov, jmp, syscall, int_0x80, ret } 
+{ _no = 0, inc, _int, xor, mov, lea, jmp, syscall, int_0x80, ret } 
 instruction_t;
 
 /*
@@ -41,7 +49,7 @@ struct instruction_set {
 };
 
 #define ARG_INSTRUCTIONS 4
-#define TOTAL_INSTRUCTIONS 7
+#define TOTAL_INSTRUCTIONS 8
 extern struct instruction_set INSTRUCTION_SETS[];
 typedef struct instruction_set _iset;
 
@@ -65,6 +73,19 @@ extern const u8 E_O_C[];
 */
 extern const u8 BLACKSPACE;
 
-#define _SYSCALL     {0x0F, 0x05}
-#define _INT_0x80    {0xCD, 0x80}
-#define _RET         {0xC3}
+/* instructions.c */
+
+public ptr parse_instruction(string line, arch_t arch);
+public u8 *mov_gen(reg_t reg, string q, arch_t arch);
+public u8 *lea_gen(reg_t reg, string q, arch_t arch);
+
+/* db.c */
+public reg_t reg_to_type(string reg);
+public i64 get_instruction_info(string instruction);
+public instruction_t checknget_instruction(string q, string dest);
+
+/* utils.c */
+public u64 validate_integer(string val);
+u8 hex_value(char c);
+
+#endif
