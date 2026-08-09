@@ -8,9 +8,9 @@
 Nexa -> AST -> Instruction Encoding
 
 # Features
-- [Variables](https://google.com)
-- [Functions]
-- [Structs]
+- [Variables](https://github.com/FlatStdlib/FSLA/blob/main/assembler/src/nexa/variable.c)
+- [Functions](https://github.com/FlatStdlib/FSLA/blob/main/assembler/src/nexa/function.c)
+- [Structs](https://github.com/FlatStdlib/FSLA/blob/main/assembler/src/nexa/struct.c)
 - [Variable Modification]
 - [Function Calls]
 		</td>
