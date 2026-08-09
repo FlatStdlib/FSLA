@@ -11,7 +11,7 @@ Nexa -> AST -> Instruction Encoding
 <table>
 	<tr>
 		<td width=35% valign=top>
-* [Variables](https://google.com)
+* [Variables](#https://google.com)
 * [Functions]
 * [Structs]
 * [Variable Modification]
