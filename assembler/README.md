@@ -8,7 +8,7 @@
 Nexa -> AST -> Instruction Encoding
 
 # Features
-- [Variables](#https://google.com)
+- [Variables](https://google.com)
 - [Functions]
 - [Structs]
 - [Variable Modification]
