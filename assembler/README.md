@@ -8,14 +8,11 @@
 Nexa -> AST -> Instruction Encoding
 
 # Features
-<table>
-	<tr>
-		<td width=35% valign=top>
-* [Variables](#https://google.com)
-* [Functions]
-* [Structs]
-* [Variable Modification]
-* [Function Calls]
+- [Variables](#https://google.com)
+- [Functions]
+- [Structs]
+- [Variable Modification]
+- [Function Calls]
 		</td>
 	</tr>
 </table>
