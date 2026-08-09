@@ -35,6 +35,6 @@ Nexa -> AST -> Instruction Encoding
 		| - assembler/			// Assembler
 			| - db.c			// Registers, Encoded Byte(s) Declaration
 			| - instructions.c	// Operand-Based Instruction to Encoded Byte(s) Gen
-			| - opcode.h		// 
-			| - utils.c
+			| - opcode.h		// Arch, Instruction(s), and Register(s) Declaration
+			| - utils.c			// Dynamic List Lookup
 | - tests/
