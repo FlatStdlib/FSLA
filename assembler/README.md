@@ -8,6 +8,7 @@
 Nexa -> AST -> Instruction Encoding
 
 # Features
+Note that the items listed below are Linked to the parser of such parts
 - [Variables](https://github.com/FlatStdlib/FSLA/blob/main/assembler/src/nexa/variable.c)
 - [Functions](https://github.com/FlatStdlib/FSLA/blob/main/assembler/src/nexa/function.c)
 - [Structs](https://github.com/FlatStdlib/FSLA/blob/main/assembler/src/nexa/struct.c)
@@ -30,7 +31,7 @@ Nexa -> AST -> Instruction Encoding
 		| - function.c			// Function Parsers
 		| - struct.c			// Struct Parsers
 		| - types.c				// Type Arrays && Sizes 
-		| - types.h				// Buiilt-in Type Declaration
+		| - types.h				// Built-in Type Declaration
 		| - variable.c			// Variable Parsers
 		| - assembler/			// Assembler
 			| - db.c			// Registers, Encoded Byte(s) Declaration
