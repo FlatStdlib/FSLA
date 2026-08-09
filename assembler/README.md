@@ -8,7 +8,6 @@
 Nexa -> AST -> Instruction Encoding
 
 # Features
-
 <table>
 	<tr>
 		<td width=35% valign=top>
