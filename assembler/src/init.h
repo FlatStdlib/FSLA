@@ -14,6 +14,7 @@ typedef struct
 	arch_t	arch;
 	string	content;
 
+	array 	ast;
 	u8		*opcode;
 	i32		size;
 	string  *buffers;

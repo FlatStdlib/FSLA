@@ -2,11 +2,9 @@
 #include "types.h"
 
 char get_next_symbol_only(string buffer, int pos);
-public fn_t process_function(string fnc_line, int *pos)
+public bool process_function(fn_t fnc, string fnc_line, int *pos)
 {
-    _function fnc;
-    memzero(&fnc, sizeof(_function));
-
+    fnc->arg_types = init_array();
     char types[6][1024];
     types[0][0] = '\0';
     int idx = 0, len = 0, in_arg_field = 0;
@@ -56,25 +54,31 @@ public fn_t process_function(string fnc_line, int *pos)
 		}
     }
 
+
+	_printf("Args: %d\n", (ptr)&idx);
     for(int i = 0; i < idx; i++)
     {
-        print("-> '"), print(types[i]), print("'\n");
+        if(i == idx - 1) {
+            println(types[i]);
+        } else {
+            _printf("%s, ", types[i]);  
+        }
+
 	    types[0][0] = '\0';
     }
 
-	_printf("Args: %d\n", (ptr)&idx);
     if(types[0][0] != '\0' && idx % 2)
         fsl_panic("Invalid function arguments\n");
 
 	memzero(types, sizeof(types));
-    process_function_body(&fnc, fnc_line, pos);
-    return NULL;
+    process_function_body(fnc, fnc_line, pos);
+    return false;
 }
 
-public fn process_function_body(fn_t fnc, string fnc_line, int *pos)
+public bool process_function_body(fn_t fnc, string fnc_line, int *pos)
 {
     if(!fnc)
-        return;
+        return false;
 
     // printc(fnc_line[*pos]), println(NULL);
     char word[1024];
@@ -122,13 +126,27 @@ public fn process_function_body(fn_t fnc, string fnc_line, int *pos)
 			_printf("ASM: %s\n", asm_);
             u8 *opcode = parse_instruction(asm_, x86_64);
             char byte[3];
-            byte_to_hex(opcode[0], byte);
-            println(byte);
-            byte_to_hex(opcode[1], byte);
-            println(byte);
 
-			if(fnc_line[n] == ')');
-			*pos = n;
+            if(opcode[2] == '\0'){
+                byte_to_hex(opcode[0], byte);
+                print(byte), print(", ");
+                byte_to_hex(opcode[1], byte);
+                println(byte);
+            } else {
+                for(int i = 0; i < 10; i++) {
+                    byte_to_hex(opcode[i], byte);
+                    if(i == 9) {
+                        println(byte);
+                    } else {
+                        print(byte), print(", ");
+                    }
+                }
+            }
+
+            memzero(asm_, sizeof(asm_));
+            _pfree(opcode);
+			if(fnc_line[n + 1] == ')');
+			    *pos = n;
 
 			continue;
 		}
@@ -143,4 +161,26 @@ public fn process_function_body(fn_t fnc, string fnc_line, int *pos)
 			word[idx++] = fnc_line[*pos];
 		}
     }
+
+    return true;
+}
+
+public fn function_destruct(fn_t fnc)
+{
+    if(!fnc)
+        return;
+
+    if(fnc->arg_types)
+        pfree_array(fnc->arg_types);
+
+    if(fnc->name)
+        _pfree(fnc->name);
+
+    if(fnc->body)
+        _pfree(fnc->body);
+
+    if(fnc->body_opcode)
+        _pfree(fnc->body_opcode);
+
+    _pfree(fnc);
 }

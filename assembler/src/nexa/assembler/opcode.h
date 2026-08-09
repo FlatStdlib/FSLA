@@ -33,9 +33,11 @@ struct _reg {
 extern struct _reg _REGISTERS[];
 
 typedef enum
-{ _no = 0, inc, _int, xor, mov, lea, jmp, syscall, int_0x80, ret } 
+{ _no = 0, inc, _int, xor, nop, mov, lea, jmp, syscall, int_0x80, ret } 
 instruction_t;
 
+
+typedef u8 *(*asm_gen_handler)(reg_t reg, string q, arch_t arch);
 /*
     Instruction Set Idenifiers
 
@@ -45,7 +47,7 @@ struct instruction_set {
     instruction_t in;
     string id;
     int args;
-    u8 *(*handler)(reg_t reg, string q, arch_t arch);
+    void *handler;
 };
 
 #define ARG_INSTRUCTIONS 4
@@ -76,8 +78,10 @@ extern const u8 BLACKSPACE;
 /* instructions.c */
 
 public ptr parse_instruction(string line, arch_t arch);
-public u8 *mov_gen(reg_t reg, string q, arch_t arch);
-public u8 *lea_gen(reg_t reg, string q, arch_t arch);
+public u8 *syscall_gen();
+public u8 *int_0x80_gen();
+public asm_gen_handler mov_gen(reg_t reg, string q, arch_t arch);
+public asm_gen_handler lea_gen(reg_t reg, string q, arch_t arch);
 
 /* db.c */
 public reg_t reg_to_type(string reg);

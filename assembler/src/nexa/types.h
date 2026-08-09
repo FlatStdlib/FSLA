@@ -34,7 +34,7 @@ typedef struct {
     bool        is_const;
     _Datatype   type;
     string      name;
-    _variable   **arg_types;
+    array       arg_types;
     i32         arg_count;
     string      *body;
 
@@ -67,7 +67,7 @@ extern void *__DATA_TYPES_INFO__[][2];
 _Datatype find_type(string q);
 
 /* function.c */
-public fn_t process_function(string fnc_line, int *pos);
-public fn process_function_body(fn_t fnc, string fnc_line, int *pos);
+public bool process_function(fn_t fnc, string fnc_line, int *pos);
+public bool process_function_body(fn_t fnc, string fnc_line, int *pos);
 
 #endif

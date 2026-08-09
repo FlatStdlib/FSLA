@@ -32,9 +32,9 @@ struct instruction_set INSTRUCTION_SETS[] = {
     {xor,       "xor",      2},
     {mov,       "mov",      2, mov_gen},
     {lea,       "lea",      2, lea_gen},
-    {_int,      "int",      1},
-    {syscall,   "syscall",  0},
-    {ret,       "ret",      0}
+    {_int,      "int",      1, int_0x80_gen},
+    {syscall,   "syscall",  0, syscall_gen},
+    {ret,       "ret",      0,}
 };
 
 public instruction_t checknget_instruction(string q, string dest)

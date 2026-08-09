@@ -28,7 +28,7 @@ i8 get_next_token(string buffer, i64 *pos, int sz)
 {
 	for(; *pos < sz; (*pos)++)
 	{
-		if(buffer[*pos] == '\t' || buffer[*pos] == '\n' || buffer[*pos] == '\r' || buffer[*pos] == '\t')
+		if(buffer[*pos] == '\t' || buffer[*pos] == '\r' || buffer[*pos] == '\t')
 			continue;
 
 		return *pos;
@@ -41,8 +41,16 @@ int entry()
 {
 	int sz = 0;
 	string data = readFile("lul.n", &sz);
-	for(i64 i = 0; get_next_token(data, &i, sz) != -1; i++)
+	i64 i = 0;
+	while(get_next_token(data, &i, sz) != -1)
 	{
+		if(data[i] == '\n' || data[i] == ' ') {
+			printc(data[i]);
+			i++;
+			continue;
+		}
+
 		printc(data[i]);
+		i++;
 	}
 }

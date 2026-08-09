@@ -7,9 +7,10 @@
 
 Nexa -> AST -> Instruction Encoding
 
-# Nexa Lang Features To ASM Gen
+# Features
 
-```c
-i8 n = 3;
-
-```
+[ ] - Variables
+[x] - Functions
+[ ] - Structs
+[ ] - Variable Modification
+[ ] - Function Calls

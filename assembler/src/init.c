@@ -19,6 +19,7 @@ public _asmblr init_assembler(string filename)
 		fsl_panic("Unable to read file...!");
 
 	file_close(a.file);
+	a.ast = init_array();
 	return a;
 }
 
@@ -83,7 +84,11 @@ public fn parse_file(_asmblr *a)
 				} else if(get_next_symbol_only(a->content, n) == '(')
 				{
 					println("Function Found\n"); // Parse Function
-					process_function(a->content, &n);
+					_function fnc;
+    				memzero(&fnc, sizeof(_function));
+					fnc.type = type;
+					fnc.name = str_dup(symbol);
+					process_function(&fnc, a->content, &n);
 					i = n;
 				} else {
 					fsl_warning("expected function or variable name!");

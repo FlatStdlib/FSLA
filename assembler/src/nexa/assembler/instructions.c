@@ -1,8 +1,9 @@
 #include "opcode.h"
 
-static const u8 _SYSCALL[] = { 0x0F, 0x05 };
-static const u8 _INT_0x80[] = { 0xCD, 0x80 };
-static const u8 _RET[] = { 0xC3 };
+#define _SYSCALL { 0x0F, 0x05 }
+#define _INT_0x80 { 0xCD, 0x80 }
+#define _RET { 0xC3 }
+#define _NOP { 0x90 }
 
 /* Parse Instruction Sets */
 public ptr parse_instruction(string line, arch_t arch)
@@ -24,8 +25,8 @@ public ptr parse_instruction(string line, arch_t arch)
 			return NULL;
 		}
 
+		/* Remove comma */
 		operands[1][__get_size__(operands[1]) - 2] = '\0';
-		println(operands[1]), println(NULL);
 	}
 
 	i64 pos = get_instruction_info(instru);
@@ -33,31 +34,35 @@ public ptr parse_instruction(string line, arch_t arch)
 		fsl_panic("Invalid instruction...!");
 
 	_iset i = INSTRUCTION_SETS[pos];
-	switch(i.in)
+	switch(i.args)
 	{
-		case inc:
-			break;
-		case xor:
-			break;
-		case mov: 		
-		println("HERE");
-		return mov_gen(reg_to_type(operands[1]), operands[2], arch);
-		case jmp:
-			break;
-		case syscall: 	return _SYSCALL;
-		case _int: 		return _INT_0x80;
-		case ret: 		return _RET;
+		case 0:
+			return ((void *(*)())i.handler)();
+		case 1:
+			return ((void *(*)())i.handler)();
+		case 2:
+			return ((void *(*)(reg_t, string, arch_t))i.handler)(reg_to_type(operands[1]), operands[2], arch);
+		default:
+			fsl_panic("Invalid instruction set");
 	}
 }
+
+public u8 *syscall_gen()
+{ return (u8 *)to_heap((u8 [])_SYSCALL, sizeof(i8) * 2); }
+
+public u8 *int_0x80_gen()
+{ return (u8 *)to_heap((u8 [])_INT_0x80, sizeof(i8) * 2); }
+
+public u8 *nop_gen()
+{ return (u8 *)to_heap((u8 [])_NOP, sizeof(i8) * 1); }
 
 /*
     Acceptable Value Usage:
         - Integer			= 0x3
         - Offset Pointer	= 0x00000000
 */
-public u8 *mov_gen(reg_t reg, string q, arch_t arch)
+public asm_gen_handler mov_gen(reg_t reg, string q, arch_t arch)
 {
-	println("HERE");
 	u8 _mov[10] = {0};
 
 	if(arch == x86)
@@ -91,7 +96,7 @@ public u8 *mov_gen(reg_t reg, string q, arch_t arch)
     return NULL;
 }
 
-public u8 *lea_gen(reg_t reg, string q, arch_t arch)
+public asm_gen_handler lea_gen(reg_t reg, string q, arch_t arch)
 {
 	static u8 _lea[10] = {0};
 
