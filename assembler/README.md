@@ -11,11 +11,11 @@ Nexa -> AST -> Instruction Encoding
 <table>
 	<tr>
 		<td width=35% valign=top>
-* [ ] Variables
-* [x] Functions
-* [ ] Structs
-* [ ] Variable Modification
-* [ ] Function Calls
+* [Variables](https://google.com)
+* [Functions]
+* [Structs]
+* [Variable Modification]
+* [Function Calls]
 		</td>
 	</tr>
 </table>
