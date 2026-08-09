@@ -10,9 +10,9 @@ Nexa -> AST -> Instruction Encoding
 # Features
 
 <tr>
-[ ] - Variables
-[x] - Functions
-[ ] - Structs
-[ ] - Variable Modification
-[ ] - Function Calls
+* [ ] Variables
+* [x] Functions
+* [ ] Structs
+* [ ] Variable Modification
+* [ ] Function Calls
 </tr>
