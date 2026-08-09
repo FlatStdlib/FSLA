@@ -16,3 +16,25 @@ Nexa -> AST -> Instruction Encoding
 		</td>
 	</tr>
 </table>
+
+# File Structure
+
+```
+| - Nexa Compiler & Assembler
+|
+| - main.c 						// Nexa programming language
+| - src/						// Source Code
+	| - init.c					// Initialization and Start Of Parser
+	| - init.h
+	| - nexa/					// Parsers, Validators, & Checks
+		| - function.c			// Function Parsers
+		| - struct.c			// Struct Parsers
+		| - types.c				// Type Arrays && Sizes 
+		| - types.h				// Buiilt-in Type Declaration
+		| - variable.c			// Variable Parsers
+		| - assembler/			// Assembler
+			| - db.c			// Registers, Encoded Byte(s) Declaration
+			| - instructions.c	// Operand-Based Instruction to Encoded Byte(s) Gen
+			| - opcode.h		// 
+			| - utils.c
+| - tests/
