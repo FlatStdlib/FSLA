@@ -9,10 +9,14 @@ Nexa -> AST -> Instruction Encoding
 
 # Features
 
-<tr>
+<table>
+	<tr>
+		<td width=35% valign=top>
 * [ ] Variables
 * [x] Functions
 * [ ] Structs
 * [ ] Variable Modification
 * [ ] Function Calls
-</tr>
+		</td>
+	</tr>
+</table>
