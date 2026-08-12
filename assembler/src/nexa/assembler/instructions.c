@@ -6,7 +6,7 @@
 #define _NOP { 0x90 }
 
 /* Parse Instruction Sets */
-public ptr parse_instruction(string line, arch_t arch)
+public ptr parse_instruction(string line, arch_t arch, i32 *bytes)
 {
 	char instru[15] = {0};
 	if(checknget_instruction(line, instru) == -1) {
@@ -37,11 +37,12 @@ public ptr parse_instruction(string line, arch_t arch)
 	switch(i.args)
 	{
 		case 0:
+			*bytes = 2;
 			return ((void *(*)())i.handler)();
 		case 1:
 			return ((void *(*)())i.handler)();
 		case 2:
-			return ((void *(*)(reg_t, string, arch_t))i.handler)(reg_to_type(operands[1]), operands[2], arch);
+			return ((void *(*)(reg_t, string, arch_t, int *))i.handler)(reg_to_type(operands[1]), operands[2], arch, bytes);
 		default:
 			fsl_panic("Invalid instruction set");
 	}
@@ -61,7 +62,7 @@ public u8 *nop_gen()
         - Integer			= 0x3
         - Offset Pointer	= 0x00000000
 */
-public asm_gen_handler mov_gen(reg_t reg, string q, arch_t arch)
+public asm_gen_handler mov_gen(reg_t reg, string q, arch_t arch, int *bytes)
 {
 	u8 _mov[10] = {0};
 
@@ -77,6 +78,7 @@ public asm_gen_handler mov_gen(reg_t reg, string q, arch_t arch)
 		_mov[3] = (u >> 16) & 0xff;
 		_mov[4] = (u >> 24) & 0xff;
 
+		*bytes = 5;
 		return to_heap(_mov, 5);
 	} else if(arch == x86_64) {
         _mov[0] = 0x48;
@@ -88,6 +90,7 @@ public asm_gen_handler mov_gen(reg_t reg, string q, arch_t arch)
 		for(int i = 0; i < 8; i++)
 			_mov[2+i] = (u >> (i * 8)) & 0xff;
 
+		*bytes = 10;
 		return to_heap(_mov, 10);
 	} else {
 		fsl_panic("Invalid cpu architecture target for the lea instruction set");
@@ -96,7 +99,7 @@ public asm_gen_handler mov_gen(reg_t reg, string q, arch_t arch)
     return NULL;
 }
 
-public asm_gen_handler lea_gen(reg_t reg, string q, arch_t arch)
+public asm_gen_handler lea_gen(reg_t reg, string q, arch_t arch, int *bytes)
 {
 	static u8 _lea[10] = {0};
 
@@ -112,6 +115,7 @@ public asm_gen_handler lea_gen(reg_t reg, string q, arch_t arch)
 		_lea[3] = (u >> 16) & 0xff;
 		_lea[4] = (u >> 24) & 0xff;
 
+		*bytes = 5;	
 		return to_heap(_lea, 5);
 	} else if(arch == x86_64) {
         _lea[0] = 0x48;
@@ -123,6 +127,7 @@ public asm_gen_handler lea_gen(reg_t reg, string q, arch_t arch)
 		for(int i = 0; i < 8; i++)
 			_lea[2+i] = (u >> (i * 8)) & 0xff;
 
+		*bytes = 10;
 		return to_heap(_lea, 10);
 	} else {
 		fsl_panic("Invalid cpu architecture target for the lea instruction set");

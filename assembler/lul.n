@@ -2,7 +2,10 @@
 i8 ptr;
 i32 n;
 i8 my_name [];
-
+i8 gay[3];
+i8 age = 25;
+i8 skid[] = "fag";
+i8 nig[10] = "lol";
 struct Person {
 	i8 name[];
 	i8 age;
@@ -25,11 +28,11 @@ void _write(i8 output, ptr string, i8 sz, fag lul)
 */
 
 // broken code test: invalid parameter usage
-//void test(i8 output, ptr string, i8 sz, i8)
-//{
-//	asm("mov rax, 1");
-//	asm("syscall");
-//}
+/* void test(i8 output, ptr string, i8 sz, i8)
+{
+	asm("mov rax, 1");
+	asm("syscall");
+} */
 
 i8 entry(   )
 {

@@ -77,11 +77,11 @@ extern const u8 BLACKSPACE;
 
 /* instructions.c */
 
-public ptr parse_instruction(string line, arch_t arch);
+public ptr parse_instruction(string line, arch_t arch, int *bytes);
 public u8 *syscall_gen();
 public u8 *int_0x80_gen();
-public asm_gen_handler mov_gen(reg_t reg, string q, arch_t arch);
-public asm_gen_handler lea_gen(reg_t reg, string q, arch_t arch);
+public asm_gen_handler mov_gen(reg_t reg, string q, arch_t arch, int *bytes);
+public asm_gen_handler lea_gen(reg_t reg, string q, arch_t arch, int *bytes);
 
 /* db.c */
 public reg_t reg_to_type(string reg);

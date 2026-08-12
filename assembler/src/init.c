@@ -19,7 +19,8 @@ public _asmblr init_assembler(string filename)
 		fsl_panic("Unable to read file...!");
 
 	file_close(a.file);
-	a.ast = init_array();
+	a.ast = allocate(0, sizeof(fn_t));
+	a.ast_count = 0;
 	return a;
 }
 
@@ -29,7 +30,7 @@ public fn parse_file(_asmblr *a)
 {
 	bool in_quotes = false, in_var = false, in_func = false, ignore = false;
 	char word[1024], line[1024];
-	i32 idx = 0, len = 0;
+	i32 idx = 0, len = 0, lines = 0;
 	for(int i = 0; i < a->filesize; i++)
 	{
 		if(a->content[i] == '/' && a->content[i + 1] == '/') {
@@ -49,6 +50,7 @@ public fn parse_file(_asmblr *a)
 
 		if(validate_whitespace(a->content[i]))
 		{
+			if(a->content[i] == '\n') lines++;
 			word[0] = '\0';
 			idx = 0;
 			continue;
@@ -60,6 +62,7 @@ public fn parse_file(_asmblr *a)
 
 			word[idx++] = '\0';
 			_Datatype type;
+			char ch = '\0';
 			if((type = find_type(word)) != _DT_NULL)
 			{
 
@@ -69,30 +72,50 @@ public fn parse_file(_asmblr *a)
 					symbol[arg_len++] = a->content[n++];
 
 				symbol[arg_len] = '\0';
-				print("Symbol Name: '"), print(symbol), print("'\n");
-				symbol[0] = '\0';
 
 				if(str_cmp(word, (string)(__DATA_TYPES_INFO__[_DT_struct][1])))
 				{
-					println("Struct Found\n"); // Create array
+					print("[Struct Found] Symbol Name: '"), print(symbol), print("'\n"); // Create array
 					while(a->content[n++] != '}');
 
 					i = n;
-				// } else if(a->content[n] == '[' || a->content[n] == ';') {
-				} else if(get_next_symbol_only(a->content, n) == '[' || get_next_symbol_only(a->content, n) == ';') {
-					println("Variable Found\n"); // Get the fixed size
+				} else if((ch = get_next_symbol_only(a->content, n)) == '[' || ch == ';' || ch == '=') {
+					print("[Variable Found] Symbol Name: '"), print(symbol), print("'\n"); // Get the fixed size
+					var_t v = allocate(0, sizeof(_variable));
+					memzero(v, sizeof(_variable));
+					v->feature = n_variable;
+					v->type = type;
+					v->name = str_dup(symbol);
+					process_variable(v, a->content, &n);
+					
+					a->ast[a->ast_count++] = (ptr)v;
+					a->ast = reallocate(a->ast, sizeof(_variable) * (a->ast_count + 1));
+					a->ast[a->ast_count] = NULL;
 				} else if(get_next_symbol_only(a->content, n) == '(')
 				{
-					println("Function Found\n"); // Parse Function
-					_function fnc;
-    				memzero(&fnc, sizeof(_function));
-					fnc.type = type;
-					fnc.name = str_dup(symbol);
-					process_function(&fnc, a->content, &n);
+					fn_t fnc = allocate(0, sizeof(_function));
+					fnc->feature = n_function;
+					fnc->type = type;
+					fnc->name = str_dup(symbol);
+					if(!process_function(fnc, a->content, &n))
+						fsl_warning("Err to parse function!");
+
+					print("[Function Found] Symbol Name: '"), print(symbol), print("'\n");
+					_printf("Args: %d | Types: ", (ptr)&fnc->arg_count);
+					for(int i = 0; i < fnc->arg_count; i++) {
+						i == fnc->arg_count - 1 ? print(fnc->arg_types[i]) : _printf("%s ",fnc->arg_types[i]);
+					}
+
+					a->ast[a->ast_count++] = (ptr)fnc;
+					a->ast = reallocate(a->ast, sizeof(fn_t) * (a->ast_count + 1));
+					a->ast[a->ast_count] = NULL;
 					i = n;
 				} else {
+					_printf("Line: %d | ", (ptr)&lines);
 					fsl_warning("expected function or variable name!");
 				}
+
+				symbol[0] = '\0';
 			}
 
 			word[0] = '\0';
@@ -118,70 +141,10 @@ public fn parse_file(_asmblr *a)
 	_pfree(a->content);
 }
 
-void skip_line(string buffer, int *pos)
+void bin_dump(_asmblr *a)
 {
-	while(buffer[*pos] != '\n')
+	for(int i = 0; i < a->ast_count; i++)
 	{
-		(*pos)++;
+
 	}
-}
-
-bool validate_whitespace(char c)
-{
-	return (c == '\t' || c == '\r' || c == '\n');
-}
-
-i8 get_next_token(string buffer, int pos)
-{
-	for(int i = pos; buffer[i] != '\0'; i++)
-	{
-		/* Only Skip Whitespaces*/
-		if(buffer[i] == ' ' || buffer[i] == '\t' || buffer[i] == '\r' || buffer[i] == '\n')
-			continue;
-
-		return buffer[i];
-	}
-
-	return -1;
-}
-
-/* Returns the next ASCII symbol, non-alphabet or digit */
-char get_next_symbol_only(string buffer, int pos)
-{
-	for(int i = pos; buffer[i] != '\0'; i++)
-	{
-		/* Only Skip Whitespaces*/
-		if(buffer[i] == ' ' || buffer[i] == '\t' || buffer[i] == '\r' || buffer[i] == '\n') {
-			continue;
-		}
-
-		if(is_ascii_alpha(buffer[i]) || is_ascii_digit(buffer[i])) {
-			return -1;
-		}
-			
-		if(buffer[i] > 0 && buffer[i] < 127) {
-			return buffer[i];
-		}
-	}
-
-	return -1;
-}
-
-/* Returns the next ASCII character */
-char get_next_token_only(string buffer, int pos)
-{
-	for(int i = pos; buffer[i] != '\0'; i++)
-	{
-		/* Only Skip Whitespaces*/
-		if(buffer[i] == ' ' || buffer[i] == '\t' || buffer[i] == '\r' || buffer[i] == '\n') {
-			continue;
-		}
-
-		if(buffer[i] > 0 && buffer[i] < 127 && (is_ascii_alpha(buffer[i]) || is_ascii_digit(buffer[i]) || buffer[i] == '_'))
-		{
-			return buffer[i];
-		}
-	}
-
-	return -1;
 }

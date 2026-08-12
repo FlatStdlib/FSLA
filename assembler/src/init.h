@@ -14,7 +14,8 @@ typedef struct
 	arch_t	arch;
 	string	content;
 
-	array 	ast;
+	ptr		**ast;
+	i64		ast_count;
 	u8		*opcode;
 	i32		size;
 	string  *buffers;
@@ -22,11 +23,5 @@ typedef struct
 
 _asmblr init_assembler(string filename);
 public fn parse_file(_asmblr *a);
-
-void skip_line(string buffer, int *pos);
-bool validate_whitespace(char c);
-i8 get_next_token(string buffer, int pos);
-char get_next_symbol_only(string buffer, int pos);
-char get_next_token_only(string buffer, int pos);
 
 #endif

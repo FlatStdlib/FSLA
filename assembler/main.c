@@ -6,11 +6,23 @@ public int entry()
     _asmblr a = init_assembler("lul.n");
     parse_file(&a);
 
-    // u8 *g = int_0x80_gen();
-    // char byte[3];
-    // for(int i = 0; i < 2; i++) {
-    //     byte_to_hex(g[i], byte);
-    //     println(byte);
-    // }
+    for(int i = 0; i < a.ast_count; i++)
+    {
+        
+        if(!((var_t *)a.ast)[i])
+            continue;
+
+        var_t n = ((var_t *)a.ast)[i];
+        if(n->feature == n_variable)
+        {
+            _printf("[%d]: Type: %d | Variable: %s | Size: %d\n",  &i, &n->type, n->name, (ptr)&n->size);
+        } else if(n->feature == n_function)
+        {
+            _printf("[%d]: Return Type: %d | Function: %s | Size: %d\n", &i, (ptr)&n->type, n->name, &((fn_t)n)->count);
+        } else {
+            _printf("-> [%d]: %s\n", (ptr)&i, n->name);
+        }
+    }
+
     return 0;
 }
