@@ -44,6 +44,28 @@ i8 get_next_token(string buffer, int pos)
 }
 
 /* Returns the next ASCII symbol, non-alphabet or digit */
+char get_next_symbol_pos_only(string buffer, int *pos)
+{
+	for(; buffer[*pos] != '\0'; (*pos)++)
+	{
+		/* Only Skip Whitespaces*/
+		if(buffer[*pos] == ' ' || buffer[*pos] == '\t' || buffer[*pos] == '\r' || buffer[*pos] == '\n') {
+			continue;
+		}
+
+		if(is_ascii_alpha(buffer[*pos]) || is_ascii_digit(buffer[*pos])) {
+			return -1;
+		}
+			
+		if(buffer[*pos] > 0 && buffer[*pos] < 127) {
+			return buffer[*pos];
+		}
+	}
+
+	return -1;
+}
+
+/* Returns the next ASCII symbol, non-alphabet or digit */
 char get_next_symbol_only(string buffer, int pos)
 {
 	for(int i = pos; buffer[i] != '\0'; i++)

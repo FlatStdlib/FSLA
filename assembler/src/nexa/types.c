@@ -1,6 +1,12 @@
 #include "types.h"
 
-#define __TOTAL_DATA_TYPES 13
+#ifdef __NEXA_DEBUG__
+	bool __NDEBUG__ = true;
+#else
+	bool __NDEBUG__ = false;
+#endif
+
+#define __TOTAL_DATA_TYPES 14
 void *__DATA_TYPES_INFO__[][3] =
 {
     {(void *)_DT_void,      "void",     (void *)0},
@@ -15,6 +21,7 @@ void *__DATA_TYPES_INFO__[][3] =
     {(void *)_DT_f32,       "f32",      (void *)4},
     {(void *)_DT_f64,       "f64",      (void *)8},
     {(void *)_DT_ptr,       "ptr",      (void *)8},
+    {(void *)_DT_skiddy_baloo,       "skiddy_baloo",      (void *)8},
     {(void *)_DT_struct,    "struct",   (void *)0},
     NULL
 };

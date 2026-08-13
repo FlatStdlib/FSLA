@@ -22,6 +22,6 @@ typedef struct
 } _asmblr;
 
 _asmblr init_assembler(string filename);
-public fn parse_file(_asmblr *a);
+public fn parse_file(_asmblr *a, bool struct_only, int cline);
 
 #endif

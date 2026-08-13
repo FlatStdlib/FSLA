@@ -26,12 +26,12 @@ public _asmblr init_assembler(string filename)
 
 
 /* For The Language Parser */
-public fn parse_file(_asmblr *a)
+public fn parse_file(_asmblr *a, bool struct_only, int cline)
 {
 	bool in_quotes = false, in_var = false, in_func = false, ignore = false;
 	char word[1024], line[1024];
 	i32 idx = 0, len = 0, lines = 0;
-	for(int i = 0; i < a->filesize; i++)
+	for(int i = cline ? cline : 0; i < a->filesize; i++)
 	{
 		if(a->content[i] == '/' && a->content[i + 1] == '/') {
 			while(a->content[i++] != '\n');
@@ -73,11 +73,12 @@ public fn parse_file(_asmblr *a)
 
 				symbol[arg_len] = '\0';
 
-				if(str_cmp(word, (string)(__DATA_TYPES_INFO__[_DT_struct][1])))
+				if(!struct_only && str_cmp(word, (string)(__DATA_TYPES_INFO__[_DT_struct][1])))
 				{
-					print("[Struct Found] Symbol Name: '"), print(symbol), print("'\n"); // Create array
+//					print("[Struct Found] Symbol Name: '"), print(symbol), print("'\n"); // Create array
+					struct_t st = allocate(0, sizeof(_struct));
+					process_struct(st, a->content, &n);
 					while(a->content[n++] != '}');
-
 					i = n;
 				} else if((ch = get_next_symbol_only(a->content, n)) == '[' || ch == ';' || ch == '=') {
 					print("[Variable Found] Symbol Name: '"), print(symbol), print("'\n"); // Get the fixed size
@@ -87,11 +88,11 @@ public fn parse_file(_asmblr *a)
 					v->type = type;
 					v->name = str_dup(symbol);
 					process_variable(v, a->content, &n);
-					
+
 					a->ast[a->ast_count++] = (ptr)v;
 					a->ast = reallocate(a->ast, sizeof(_variable) * (a->ast_count + 1));
 					a->ast[a->ast_count] = NULL;
-				} else if(get_next_symbol_only(a->content, n) == '(')
+				} else if(!struct_only && get_next_symbol_only(a->content, n) == '(')
 				{
 					fn_t fnc = allocate(0, sizeof(_function));
 					fnc->feature = n_function;
@@ -100,12 +101,12 @@ public fn parse_file(_asmblr *a)
 					if(!process_function(fnc, a->content, &n))
 						fsl_warning("Err to parse function!");
 
-					print("[Function Found] Symbol Name: '"), print(symbol), print("'\n");
+/*					print("[Function Found] Symbol Name: '"), print(symbol), print("'\n");
 					_printf("Args: %d | Types: ", (ptr)&fnc->arg_count);
 					for(int i = 0; i < fnc->arg_count; i++) {
 						i == fnc->arg_count - 1 ? print(fnc->arg_types[i]) : _printf("%s ",fnc->arg_types[i]);
 					}
-
+*/
 					a->ast[a->ast_count++] = (ptr)fnc;
 					a->ast = reallocate(a->ast, sizeof(fn_t) * (a->ast_count + 1));
 					a->ast[a->ast_count] = NULL;
@@ -123,7 +124,7 @@ public fn parse_file(_asmblr *a)
 			continue;
 		}
 
-		if((in_quotes && a->content[i] == '"') || is_ascii_alpha(a->content[i]) || is_ascii_digit(a->content[i]))
+		if((in_quotes && a->content[i] == '"') || a->content[i] == '_' || is_ascii_alpha(a->content[i]) || is_ascii_digit(a->content[i]))
 		{
 			if(idx >= 1023) { /* Doubt, It'll Reach Here */
 				word[0] = '\0';
@@ -131,6 +132,7 @@ public fn parse_file(_asmblr *a)
 			}
 
 			word[idx++] = a->content[i];
+			// println(word);
 		}
 
 		// (*a->content)++;

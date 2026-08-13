@@ -5,11 +5,14 @@ i8 my_name [];
 i8 gay[3];
 i8 age = 25;
 i8 skid[] = "fag";
-i8 nig[10] = "lol";
-struct Person {
+i64 nig[10] = "lol";
+
+skiddy_baloo skiddy;
+
+/* struct Person {
 	i8 name[];
 	i8 age;
-}
+} */
 
 //            rdi       rsi        rdx
 void write (i8 output,     ptr    string, i8 size)

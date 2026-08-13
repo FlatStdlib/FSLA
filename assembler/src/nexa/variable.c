@@ -38,11 +38,12 @@ public bool process_variable(var_t var, string var_line, int *pos)
     {
 		size[len] = '\0';
 		var->fixed_size = true;
-		_printf("Fixed Size: %s\n", (ptr)&size);
-		var->size = str_to_int((const string)size);
+		if(__NDEBUG__) _printf("Fixed Size: %s\n", (ptr)&size);
+		var->size = str_to_int((const string)size);;
+		var->length = var->size * get_type_size(var->type);
     } else {
-    	var->size = get_type_size(var->type);
-    	_printf("Type Size: %d\n", (ptr)&var->size);
+    	var->length = get_type_size(var->type);
+   		if(__NDEBUG__) _printf("Type Size: %d\n", (ptr)&var->size);
     }
 
 	skip_whitespaces(var_line, pos);
@@ -54,7 +55,7 @@ public bool process_variable(var_t var, string var_line, int *pos)
 	{
 		(*pos)++;
 		skip_all_whitespaces(var_line, pos);
-		process_variable_value(var, var_line, pos);
+		return process_variable_value(var, var_line, pos);
 	}
 
     return false;
@@ -65,7 +66,6 @@ public bool process_variable_value(var_t var, string var_line, int *pos)
 {
 	char value[1024];
 	int len = 0;
-
 
 	for(; var_line[*pos] != ';'; (*pos)++)
 	{
@@ -79,6 +79,9 @@ public bool process_variable_value(var_t var, string var_line, int *pos)
 	}
 
 	str_strip(value);
+
+	/* Detect Hardcoded Value Type */
+
 	if(str_startswith(value, "\"") && str_startswith(value, "\""))
 	{
 		trim_char_idx(value, 0);
@@ -88,8 +91,15 @@ public bool process_variable_value(var_t var, string var_line, int *pos)
 		{
 			for(int i = 0; i < 3; i++) len--;
 			var->size = len;
-			_printf("%s resized to %d\n", var->name, (ptr)&var->size);
+			var->length = len * get_type_size(var->type);
+			if(__NDEBUG__) _printf("%s resized to %d\n", var->name, (ptr)&var->size);
 		}
 	}
-	_printf("R: '%s'\n", value);
+
+	if(__NDEBUG__) _printf("Value: '%s'\n", value);
+	var->value = str_dup(value);
+
+	if(len > 0) return true;
+
+	return false;
 }
