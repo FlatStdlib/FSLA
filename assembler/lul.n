@@ -7,7 +7,7 @@ i8 age = 25;
 i8 skid[] = "fag";
 i64 nig[10] = "lol";
 
-skiddy_baloo skiddy;
+arc skiddy;
 
 /* struct Person {
 	i8 name[];

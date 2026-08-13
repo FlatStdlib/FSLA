@@ -124,7 +124,7 @@ public fn parse_file(_asmblr *a, bool struct_only, int cline)
 			continue;
 		}
 
-		if((in_quotes && a->content[i] == '"') || a->content[i] == '_' || is_ascii_alpha(a->content[i]) || is_ascii_digit(a->content[i]))
+		if((in_quotes && a->content[i] == '"') || is_ascii_alpha(a->content[i]) || is_ascii_digit(a->content[i]))
 		{
 			if(idx >= 1023) { /* Doubt, It'll Reach Here */
 				word[0] = '\0';

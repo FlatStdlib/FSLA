@@ -29,7 +29,7 @@ typedef enum {
     _DT_f32,
     _DT_f64,
     _DT_ptr,
-    _DT_skiddy_baloo,
+    _DT_arc,
     _DT_struct
 } _Datatype;
 

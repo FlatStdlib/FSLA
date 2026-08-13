@@ -21,7 +21,7 @@ void *__DATA_TYPES_INFO__[][3] =
     {(void *)_DT_f32,       "f32",      (void *)4},
     {(void *)_DT_f64,       "f64",      (void *)8},
     {(void *)_DT_ptr,       "ptr",      (void *)8},
-    {(void *)_DT_skiddy_baloo,       "skiddy_baloo",      (void *)8},
+    {(void *)_DT_ptr,       "arc",      (void *)8},
     {(void *)_DT_struct,    "struct",   (void *)0},
     NULL
 };
