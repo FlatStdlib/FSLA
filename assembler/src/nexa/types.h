@@ -96,6 +96,7 @@ extern void *__DATA_TYPES_INFO__[][3];
 /* types.c */
 _Datatype find_type(string q);
 int get_type_size(_Datatype t);
+string get_type_rstring(_Datatype t);
 
 /* function.c */
 public bool process_function(fn_t fnc, string fnc_line, int *pos);

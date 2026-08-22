@@ -21,10 +21,19 @@ void *__DATA_TYPES_INFO__[][3] =
     {(void *)_DT_f32,       "f32",      (void *)4},
     {(void *)_DT_f64,       "f64",      (void *)8},
     {(void *)_DT_ptr,       "ptr",      (void *)8},
-    {(void *)_DT_ptr,       "arc",      (void *)8},
+    {(void *)_DT_arc,       "arc",      (void *)8},
     {(void *)_DT_struct,    "struct",   (void *)0},
     NULL
 };
+
+string get_type_rstring(_Datatype t)
+{
+	for(int i = 0; i < __TOTAL_DATA_TYPES; i++)
+	{
+		if((_Datatype)__DATA_TYPES_INFO__[i][0] == t)
+			return (string)__DATA_TYPES_INFO__[i][1];
+	}
+}
 
 int get_type_size(_Datatype t)
 {

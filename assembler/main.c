@@ -14,7 +14,7 @@ public int entry()
         var_t n = ((var_t *)a.ast)[i];
         if(n->feature == n_variable)
         {
-            _printf("[%d]: Type: %d | Variable: %s | Size: %d\n",  &i, &n->type, n->name, (ptr)&n->length);
+            _printf("[%d]: Type: %d - %s | Variable: %s | Size: %d\n",  &i, &n->type, get_type_rstring(n->type), n->name, (ptr)&n->length);
         } else if(n->feature == n_function)
         {
             _printf("[%d]: Return Type: %d | Function: %s | Size: %d\n", &i, (ptr)&n->type, n->name, &((fn_t)n)->count);
